@@ -1,6 +1,6 @@
 # Qyra - Next-Gen Queue Management System
 
-A modern, futuristic queue management application built with React, TypeScript, and Tailwind CSS. Features a beautiful purple-themed UI with glassmorphism effects and separate admin/user experiences.
+Qyra is a digital queue management system designed to minimize waiting times. Users can join and monitor queues from their devices in real-time. Admins can manage and optimize queues efficiently, enhancing overall service.
 
 ## ✨ Features
 
