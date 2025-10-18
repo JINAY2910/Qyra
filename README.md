@@ -33,7 +33,7 @@ A modern, futuristic queue management application built with React, TypeScript, 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/JINAY2910/Qyra.git
    cd Qyra
    ```
 
