@@ -159,7 +159,9 @@ The application is built with a mobile-first approach and works seamlessly acros
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
