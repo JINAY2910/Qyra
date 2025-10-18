@@ -16,13 +16,6 @@ Qyra is a digital queue management system designed to minimize waiting times. Us
 - **Analytics** - Performance metrics and customer insights
 - **Queue Management** - Start serving, complete, skip customers with priority handling
 
-### 🎨 Design Features
-- **Purple Futuristic Theme** - Deep purple gradients with neon accents
-- **Glassmorphism Effects** - Modern glass-like surfaces with backdrop blur
-- **Responsive Design** - Mobile-first approach, works on all devices
-- **Smooth Animations** - Glow effects, floating elements, and transitions
-- **TV Display Mode** - Optimized fullscreen view for public displays
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -81,23 +74,6 @@ src/
 2. **Manage Queue** - Start serving, complete, or skip customers
 3. **View Analytics** - Monitor performance metrics and customer insights
 4. **Priority Handling** - Manage VIP and senior citizen priorities
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary Purple**: `#6D28D9` to `#A855F7`
-- **Neon Accent**: `#C084FC`
-- **Dark Background**: `#0F172A` to `#334155`
-- **Glass Effects**: White/10 opacity with backdrop blur
-
-### Typography
-- **Headers**: Poppins (Bold, Modern)
-- **Body**: Inter (Clean, Readable)
-
-### Components
-- **Glass Cards**: Semi-transparent with blur effects
-- **Gradient Buttons**: Purple gradients with hover animations
-- **Floating Elements**: Subtle animations and glow effects
 
 ## 🔧 Available Scripts
 
