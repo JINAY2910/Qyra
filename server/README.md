@@ -1,125 +1,405 @@
-# Qyra Backend Server
+# Qyra Backend (Server)
 
-Complete backend API for the Qyra queue management system.
+Production-ready Express + MongoDB API powering the Qyra queue management system. Provides public endpoints for customers to join and track the queue, and protected admin endpoints to operate the queue, configure settings, and view analytics.
 
-## 📁 Project Structure
+## Overview
+- Base URL: `http://localhost:<PORT>/api`
+- Tech: `express`, `mongoose`, `jsonwebtoken`, `bcryptjs`, `cors`, `dotenv`
+- CORS: Allowed origins `http://localhost:5173`, `http://localhost:5174`, `https://qyra-gamma.vercel.app`
+- Auth: JWT Bearer token with 7-day expiry
+- Database: MongoDB via `MONGO_URI`
 
+## Project Structure
 ```
 /server
 ├── config/
-│   └── db.js              # MongoDB connection
+│   └── db.js                          # MongoDB connection
 ├── controllers/
-│   ├── authController.js  # Authentication logic
-│   └── queueController.js # Queue management logic
+│   ├── authController.js              # Authentication logic
+│   ├── queueController.js             # Queue management logic
+│   └── settingsController.js          # Shop settings logic
 ├── middleware/
-│   ├── auth.js            # JWT authentication middleware
-│   └── errorHandler.js    # Error handling middleware
+│   ├── auth.js                        # Legacy JWT auth middleware
+│   ├── authMiddleware.js              # JWT auth + admin protection
+│   └── errorHandler.js                # Error handling middleware
 ├── models/
-│   ├── User.js            # User model (Admin/Customer)
-│   └── QueueItem.js       # Queue item model
+│   ├── User.js                        # User model (Admin/Customer)
+│   ├── QueueItem.js                   # Queue item model
+│   └── ShopSettings.js                # Shop settings model
 ├── routes/
-│   ├── authRoutes.js      # Authentication routes
-│   └── queueRoutes.js     # Queue routes
+│   ├── authRoutes.js                  # Authentication routes
+│   ├── queueRoutes.js                 # Queue routes
+│   └── settingsRoutes.js              # Settings routes
+├── scripts/
+│   └── updateAdminTimePerCustomer.js  # Backfill avgTimePerCustomer for admins
 ├── utils/
-│   ├── generateToken.js   # JWT token generation
-│   └── generateTokenNumber.js # Token number generation
-├── .env                   # Environment variables
+│   ├── createAdmin.js                 # Create demo admin user
+│   ├── generateToken.js               # JWT token generation
+│   └── generateTokenNumber.js         # Token number generation
+├── .env                               # Environment variables (not committed)
 ├── .gitignore
 ├── package.json
-├── server.js              # Main server file
+├── package-lock.json
+├── server.js                          # Main server file
 └── README.md
 ```
 
-## 🚀 Setup Instructions
+## Installation
+- Ensure Node.js and MongoDB are available
+- Navigate to `server/`
+- Run `npm install`
 
-### 1. Configure MongoDB Connection
+## Scripts
+- `npm run start` — start server
+- `npm run dev` — start server with nodemon
+- `npm run create-admin` — create demo admin user `admin@qyra.com / admin123`
+- `npm run update-admin-time` — backfill `avgTimePerCustomer` to admins lacking it
 
-Edit the `.env` file and replace `<PASSWORD>` with your actual MongoDB Atlas password:
-
-```env
-MONGO_URI=<your_connection_string_here>
-JWT_SECRET=supersecretkey
+## .env Configuration
+Create `server/.env` with:
+```
 PORT=5000
+MONGO_URI=mongodb://localhost:27017/qyra
+JWT_SECRET=replace_with_a_strong_secret
+NODE_ENV=development
 ```
 
-**Important:** Replace `YOUR_PASSWORD_HERE` with your actual MongoDB password, and update the cluster URL if needed.
+## Models
 
-### 2. Create Admin User
+### User
+- `name`: string, required
+- `email`: string, required, unique, lowercase
+- `password`: string, required, min 6, not selected by default
+- `role`: enum `admin | customer`, default `customer`
+- `avgTimePerCustomer`: number, minutes, default `10`, range `1..120`
+- Timestamps enabled
 
-Before using the admin features, you need to create an admin user in MongoDB. You can do this by:
+### QueueItem
+- `name`: string, required
+- `phone`: string, optional
+- `email`: string, optional, lowercase
+- `type`: enum `Walk-in | VIP | Senior`, default `Walk-in`
+- `priorityLevel`: number, required, default `1` (admin can increase to `5`)
+- `status`: enum `waiting | serving | completed | removed`, default `waiting`
+- `tokenNumber`: string, required, unique format `QY-XXXX`
+- `completedAt`: date, nullable
+- `createdAt`: date, defaults to now
+- Timestamps enabled
 
-**Option A: Using MongoDB Compass or Atlas UI**
-- Connect to your database
-- Navigate to the `users` collection
-- Insert a document:
-```json
-{
-  "name": "Admin",
-  "email": "admin@qyra.com",
-  "password": "admin123",
-  "role": "admin"
-}
-```
-Note: The password will be automatically hashed when saved.
+### ShopSettings
+- `isPaused`: boolean, default `false`
+- `isClosed`: boolean, default `false`
+- `isMaintenanceMode`: boolean, default `false`
+- `theme.darkMode`: boolean, default `true`
+- Static `getSettings()` ensures a single settings document exists
 
-**Option B: Using a script (create admin script)**
-Run this in Node.js or create a temporary script:
-```javascript
-import User from './models/User.js';
-import connectDB from './config/db.js';
-import dotenv from 'dotenv';
+## Utilities
+- `generateToken(id)` — returns JWT signed with `JWT_SECRET`, expires in 7 days
+- `generateTokenNumber()` — generates unique `QY-XXXX` codes with collision checks and safe fallback
+- `utils/createAdmin.js` — creates demo admin user if missing
+- `scripts/updateAdminTimePerCustomer.js` — fills `avgTimePerCustomer=10` for admins missing the field
 
-dotenv.config();
-await connectDB();
+## Database
+- Uses Mongoose to connect via `MONGO_URI`
+- Logs connection name and host on successful connect
+- Exits process on connection error or missing `MONGO_URI`
+- Listens for `disconnected` and `error` events on the connection
 
-const admin = await User.create({
-  name: 'Admin',
-  email: 'admin@qyra.com',
-  password: 'admin123',
-  role: 'admin'
-});
+## Authentication
+- Admin login issues a JWT (`expiresIn: 7d`)
+- Protected routes require header `Authorization: Bearer <token>`
+- Only users with `role=admin` may access protected routes
 
-console.log('Admin created:', admin);
-```
+## CORS
+- Allowed origins: `http://localhost:5173`, `http://localhost:5174`, `https://qyra-gamma.vercel.app`
+- JSON bodies enabled via `express.json()` and `express.urlencoded()`
 
-### 3. Start the Server
-
-```bash
-cd server
-npm run dev
-```
-
-The server will start on `http://localhost:5000`
-
-## 📡 API Endpoints
-
-### Public Endpoints (No Authentication)
-
-#### Join Queue
-```http
-POST /api/queue/join
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "phone": "+1234567890",
-  "email": "john@example.com",
-  "type": "Walk-in"
-}
-```
-Note: Allowed values for "type": "Walk-in" | "VIP" | "Senior"
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "65a1b2c3d4e5f6g7h8i9j0k1",
-    "tokenNumber": 1,
-    "name": "John Doe",
-    "type": "Walk-in",
-    "position": 3,
+## Health
+- `GET /api/health`
+  - Response `200`:
+  ```json
+  {
+    "success": true,
+    "message": "Qyra API is running",
+    "timestamp": "2025-01-01T00:00:00.000Z"
   }
+  ```
+
+## API
+
+### Auth
+- `POST /api/auth/login`
+  - Headers: `Content-Type: application/json`
+  - Body:
+  ```json
+  { "email": "admin@qyra.com", "password": "admin123" }
+  ```
+  - Success `200`:
+  ```json
+  {
+    "success": true,
+    "token": "<jwt>",
+    "user": {
+      "id": "<userId>",
+      "name": "Demo Admin",
+      "email": "admin@qyra.com",
+      "role": "admin",
+      "avgTimePerCustomer": 10
+    }
+  }
+  ```
+  - Errors: `400` missing fields, `401` invalid credentials, `403` non-admin
+
+### Queue (Public)
+- `POST /api/queue/join`
+  - Body:
+  ```json
+  { "name": "Alice", "phone": "1234567890", "email": "alice@example.com", "type": "Walk-in" }
+  ```
+  - Type allowed: `Walk-in`, `VIP`, `Senior` (defaults to `Walk-in`)
+  - Success `201`:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "<queueItemId>",
+      "tokenNumber": "QY-AB12",
+      "name": "Alice",
+      "type": "Walk-in",
+      "position": 3,
+      "estimatedWait": "20 minutes"
+    }
+  }
+  ```
+  - Errors: `400` validation, `500` token generation or DB
+
+- `GET /api/queue/status/:id`
+  - Params: `id` queue item id
+  - Success `200`:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "<queueItemId>",
+      "tokenNumber": "QY-AB12",
+      "name": "Alice",
+      "type": "Walk-in",
+      "status": "waiting",
+      "position": 3,
+      "estimatedWait": "20 minutes",
+      "currentlyServing": { "tokenNumber": "QY-ZX99", "name": "Bob" }
+    }
+  }
+  ```
+  - Errors: `404` not found
+
+- `GET /api/queue/current`
+  - Success `200` when serving:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "<queueItemId>",
+      "tokenNumber": "QY-ZX99",
+      "name": "Bob",
+      "type": "VIP",
+      "phone": "",
+      "email": "",
+      "startedAt": "2025-01-01T00:00:00.000Z"
+    }
+  }
+  ```
+  - Success `200` when none:
+  ```json
+  { "success": true, "data": null, "message": "No one is currently being served" }
+  ```
+
+### Queue (Admin — requires `Authorization: Bearer <token>`)
+- `GET /api/queue/list`
+  - Query: `status` (optional), `type` (optional)
+  - Defaults to excluding `removed` items
+  - Success `200`:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "queue": [
+        {
+          "id": "<id>",
+          "tokenNumber": "QY-AB12",
+          "name": "Alice",
+          "customerType": "walk-in",
+          "type": "Walk-in",
+          "phone": "",
+          "email": "",
+          "priority": 1,
+          "priorityLevel": 1,
+          "status": "waiting",
+          "joinedAt": "2025-01-01T00:00:00.000Z",
+          "createdAt": "2025-01-01T00:00:00.000Z"
+        }
+      ],
+      "currentlyServing": null
+    }
+  }
+  ```
+
+- `PUT /api/queue/start/:id`
+  - Marks any currently serving as `completed`, then sets `:id` to `serving`
+  - Success `200` with item data
+
+- `PUT /api/queue/complete/:id`
+  - Sets `status=completed`, records `completedAt`
+  - Success `200` with item data
+
+- `PUT /api/queue/priority/:id`
+  - Only for `status=waiting`
+  - Increases `priorityLevel` up to `5`
+  - If `priorityLevel>=3`, sets `type=VIP`
+  - Success `200` with updated priority
+
+- `DELETE /api/queue/:id`
+  - Removes queue item by id
+  - Success `200` with removed item summary
+
+- `GET /api/queue/stats`
+  - Success `200`:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "totalWaiting": 12,
+      "servedToday": 7,
+      "currentlyServing": { "tokenNumber": "QY-ZX99", "name": "Bob" },
+      "averageWaitTime": 18,
+      "byType": { "Walk-in": 8, "VIP": 3, "Senior": 1 }
+    }
+  }
+  ```
+
+### Settings
+- `GET /api/settings/public`
+  - Public status flags
+  - Success `200`:
+  ```json
+  { "success": true, "data": { "isPaused": false, "isClosed": false, "isMaintenanceMode": false } }
+  ```
+
+- `GET /api/settings`
+  - Admin only
+  - Success `200`:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "isPaused": false,
+      "isClosed": false,
+      "isMaintenanceMode": false,
+      "theme": { "darkMode": true },
+      "avgTimePerCustomer": 10
+    }
+  }
+  ```
+
+- `PUT /api/settings/update`
+  - Admin only
+  - Body (all optional):
+  ```json
+  {
+    "isPaused": true,
+    "isClosed": false,
+    "isMaintenanceMode": false,
+    "theme": { "darkMode": true },
+    "avgTimePerCustomer": 15
+  }
+  ```
+  - Constraints: `avgTimePerCustomer` must be `1..120`
+  - Success `200`: returns updated flags and `avgTimePerCustomer`
+  - Errors: `400` invalid average time, `404` user not found
+
+## Queue Logic
+- Join: create item with token, infer `priorityLevel` by `type`
+- Position: among `status=waiting`, sort by `priorityLevel` desc, then `createdAt` asc
+- Wait time: `(position-1) * avgTimePerCustomer` minutes (admin-configured)
+- Serve: starting a customer completes any existing `serving`, then sets new to `serving`
+- Complete: sets `completed`, records `completedAt`
+- Priority: increase level up to `5`, auto-upgrade to `VIP` at `>=3`
+- Remove: deletes the item by id
+
+## Allowed Values
+- `type`: `Walk-in`, `VIP`, `Senior`
+- `status`: `waiting`, `serving`, `completed`, `removed`
+- `priorityLevel`: integer `1..5`
+
+## Using with Postman
+- Set environment variable `baseUrl` = `http://localhost:<PORT>/api`
+- Login: `POST {{baseUrl}}/auth/login` to obtain `token`
+- Set `Authorization: Bearer {{token}}` for all admin routes
+- Public flow:
+  - `POST {{baseUrl}}/queue/join`
+  - `GET {{baseUrl}}/queue/status/:id`
+  - `GET {{baseUrl}}/queue/current`
+- Admin flow:
+  - `GET {{baseUrl}}/queue/list`
+  - `PUT {{baseUrl}}/queue/start/:id`
+  - `PUT {{baseUrl}}/queue/complete/:id`
+  - `PUT {{baseUrl}}/queue/priority/:id`
+  - `DELETE {{baseUrl}}/queue/:id`
+  - `GET {{baseUrl}}/queue/stats`
+  - `GET {{baseUrl}}/settings`
+  - `PUT {{baseUrl}}/settings/update`
+
+## Troubleshooting
+- Server fails to start: ensure `PORT`, `MONGO_URI`, `JWT_SECRET` set in `server/.env`
+- MongoDB connection errors: verify `MONGO_URI` and database availability
+- 401/403 on admin routes: include valid `Authorization: Bearer <token>` and ensure admin role
+- CORS blocked: make requests from allowed origins or adjust CORS configuration
+- Health check: `GET /api/health` to verify server status
+
+## Notes
+- JWT expiry is 7 days
+- Average time per customer is stored on the admin user and used for ETA calculations
+- `DELETE /api/queue/:id` removes records; the `removed` status exists in the schema but is not set by this endpoint
+- Settings document is singleton; created automatically on first access
+
+- Remove: deletes the item by id
+
+## Allowed Values
+- `type`: `Walk-in`, `VIP`, `Senior`
+- `status`: `waiting`, `serving`, `completed`, `removed`
+- `priorityLevel`: integer `1..5`
+
+## Using with Postman
+- Set environment variable `baseUrl` = `http://localhost:<PORT>/api`
+- Login: `POST {{baseUrl}}/auth/login` to obtain `token`
+- Set `Authorization: Bearer {{token}}` for all admin routes
+- Public flow:
+  - `POST {{baseUrl}}/queue/join`
+  - `GET {{baseUrl}}/queue/status/:id`
+  - `GET {{baseUrl}}/queue/current`
+- Admin flow:
+  - `GET {{baseUrl}}/queue/list`
+  - `PUT {{baseUrl}}/queue/start/:id`
+  - `PUT {{baseUrl}}/queue/complete/:id`
+  - `PUT {{baseUrl}}/queue/priority/:id`
+  - `DELETE {{baseUrl}}/queue/:id`
+  - `GET {{baseUrl}}/queue/stats`
+  - `GET {{baseUrl}}/settings`
+  - `PUT {{baseUrl}}/settings/update`
+
+## Troubleshooting
+- Server fails to start: ensure `PORT`, `MONGO_URI`, `JWT_SECRET` set in `server/.env`
+- MongoDB connection errors: verify `MONGO_URI` and database availability
+- 401/403 on admin routes: include valid `Authorization: Bearer <token>` and ensure admin role
+- CORS blocked: make requests from allowed origins or adjust CORS configuration
+- Health check: `GET /api/health` to verify server status
+
+## Notes
+- JWT expiry is 7 days
+- Average time per customer is stored on the admin user and used for ETA calculations
+- `DELETE /api/queue/:id` removes records; the `removed` status exists in the schema but is not set by this endpoint
+- Settings document is singleton; created automatically on first access
+
 }
 ```
 
