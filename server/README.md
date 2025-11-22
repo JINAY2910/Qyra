@@ -37,7 +37,7 @@ Complete backend API for the Qyra queue management system.
 Edit the `.env` file and replace `<PASSWORD>` with your actual MongoDB Atlas password:
 
 ```env
-MONGO_URI=<your_connection_string_here>g
+MONGO_URI=<your_connection_string_here>
 JWT_SECRET=supersecretkey
 PORT=5000
 ```
@@ -104,8 +104,9 @@ Content-Type: application/json
   "name": "John Doe",
   "phone": "+1234567890",
   "email": "john@example.com",
-  "type": "Walk-in" | "VIP" | "Senior"
+  "type": "Walk-in"
 }
+Allowed values for "type": "Walk-in" | "VIP" | "Senior"
 ```
 
 **Response:**
@@ -122,6 +123,7 @@ Content-Type: application/json
   }
 }
 ```
+Note: The backend uses `avgTimePerCustomer` (stored in the User/Admin document) to compute estimated wait times.
 
 #### Get Queue Status
 ```http
@@ -147,6 +149,7 @@ GET /api/queue/status/:id
   }
 }
 ```
+Note: The backend uses `avgTimePerCustomer` (stored in the User/Admin document) to compute estimated wait times.
 
 #### Get Currently Serving
 ```http
@@ -373,6 +376,7 @@ const getQueueList = async () => {
 - `email` (String, required, unique)
 - `password` (String, required, hashed)
 - `role` (String, enum: 'admin' | 'customer')
+- `avgTimePerCustomer` (Number, default: 10) - Used by admin to calculate the estimated wait time
 
 ### QueueItem Model
 - `name` (String, required)
