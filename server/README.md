@@ -598,7 +598,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 Update your frontend API calls to use:
 - **Base URL**: `http://localhost:5000/api`
-- **CORS**: Already configured for `http://localhost:5173`
+- **CORS**: Configured for trusted frontend origins — http://localhost:5173, http://localhost:5174, and the production URL https://qyra-gamma.vercel.app
 
 ### Example Frontend API Call:
 
@@ -679,7 +679,13 @@ const getQueueList = async () => {
 1. **MongoDB Connection Error**: Check your `.env` file and ensure the password is correct
 2. **Port Already in Use**: Change `PORT` in `.env` to a different port
 3. **Authentication Fails**: Ensure admin user exists in database
-4. **CORS Errors**: Verify frontend is running on `http://localhost:5173`
+4. **CORS Errors**: Ensure your frontend URL is allowed in the backend CORS settings.  
+                    Supported origins include:
+                      - `http://localhost:5173` (local development)
+                      - `http://localhost:5174` (local development)
+                      - `https://qyra-gamma.vercel.app` (production)
+
+
 
 ## 📝 Notes
 

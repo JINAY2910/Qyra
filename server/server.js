@@ -66,6 +66,10 @@ app.listen(PORT, () => {
   console.log(`   Port: ${PORT}`);
   console.log(`   API: http://localhost:${PORT}/api`);
   console.log(`   Health: http://localhost:${PORT}/api/health`);
-  console.log(`   CORS: Enabled for http://localhost:5173\n`);
+  console.log("   CORS Enabled for:");
+  console.log("    - http://localhost:5173");
+  console.log("    - http://localhost:5174");
+  console.log("    - https://qyra-gamma.vercel.app\n");
+
 });
 
