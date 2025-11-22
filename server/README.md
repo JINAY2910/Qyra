@@ -670,7 +670,7 @@ const getQueueList = async () => {
 ## 🔐 Security Notes
 
 - Passwords are hashed using bcryptjs
-- JWT tokens expire in 30 days
+- JWT tokens expire in 7 days
 - Admin routes are protected by authentication middleware
 - CORS is configured for the frontend origin only
 
