@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, CheckCircle, Clock, Users, Crown, Heart, User, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, Clock, Users, Crown, Heart, User, Sparkles } from 'lucide-react';
 
 type UserPage = 'home' | 'join' | 'status';
 
@@ -32,7 +32,35 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [assignedToken, setAssignedToken] = useState<number>(0);
+  const [assignedToken, setAssignedToken] = useState<string>('');
+  const [position, setPosition] = useState<number>(0);
+  const [estimatedWait, setEstimatedWait] = useState<string>('');
+  const [shopSettings, setShopSettings] = useState<{
+    isPaused: boolean;
+    isClosed: boolean;
+    isMaintenanceMode: boolean;
+  } | null>(null);
+
+  // Fetch shop settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/settings/public');
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          setShopSettings(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+    // Refresh every 5 seconds
+    const interval = setInterval(fetchSettings, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const customerTypes = [
     { value: 'walk-in', label: 'Walk-in Customer', icon: User, color: 'blue' },
@@ -68,6 +96,17 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check shop settings
+    if (shopSettings?.isClosed) {
+      showToast('Shop is closed for today', 'error');
+      return;
+    }
+    
+    if (shopSettings?.isPaused) {
+      showToast('Queue is currently paused', 'error');
+      return;
+    }
+    
     if (!validateForm()) {
       showToast('Please fix the errors below', 'error');
       return;
@@ -75,17 +114,42 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
 
     setIsSubmitting(true);
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Map customerType to backend format
+      const typeMap: { [key: string]: string } = {
+        'walk-in': 'Walk-in',
+        'vip': 'VIP',
+        'senior': 'Senior'
+      };
       
-      // Generate dummy token number (in real app, this comes from API)
-      const token = Math.floor(Math.random() * 999) + 1;
-      setAssignedToken(token);
+      const response = await fetch('http://localhost:5001/api/queue/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          phone: formData.phone,
+          email: formData.email,
+          type: typeMap[formData.customerType] || 'Walk-in'
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to join queue');
+      }
+
+      // Store the data from API response
+      setAssignedToken(data.data.tokenNumber);
+      setPosition(data.data.position || 0);
+      setEstimatedWait(data.data.estimatedWait || '');
       setIsSubmitted(true);
       showToast('Successfully joined the queue!', 'success');
       
     } catch (error) {
+      console.error('Error joining queue:', error);
       showToast('Failed to join queue. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
@@ -99,23 +163,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
     }
   };
 
-  const calculatePosition = (token: number): number => {
-    // Dummy calculation - in real app, this comes from API
-    return Math.max(1, Math.floor(token / 10));
-  };
-
-  const calculateWaitTime = (position: number): string => {
-    // Dummy calculation - in real app, this comes from API
-    const minutes = position * 5;
-    if (minutes < 60) {
-      return `${minutes} minutes`;
-    }
-    return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
-  };
-
   if (isSubmitted) {
-    const position = calculatePosition(assignedToken);
-    const waitTime = calculateWaitTime(position);
 
     return (
       <div className="min-h-screen relative overflow-hidden">
@@ -138,7 +186,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
               
               <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-2xl p-8 mb-8 animate-glow">
                 <p className="text-primary-200 text-sm mb-2">Your Token Number</p>
-                <p className="text-6xl font-bold mb-2">#{assignedToken}</p>
+                <p className="text-4xl sm:text-5xl font-bold mb-2 whitespace-nowrap">#{assignedToken}</p>
                 <p className="text-primary-200 text-sm">Keep this number handy</p>
               </div>
 
@@ -160,7 +208,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
                     </div>
                     <span className="text-white font-medium">Expected wait</span>
                   </div>
-                  <span className="text-2xl font-bold text-primary-400">~{waitTime}</span>
+                  <span className="text-2xl font-bold text-primary-400">{estimatedWait || 'Calculating...'}</span>
                 </div>
               </div>
 
@@ -175,27 +223,22 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
                 </p>
               </div>
 
-              <div className="flex gap-4">
-                <button
-                  onClick={() => onNavigate('status')}
-                  className="flex-1 btn-primary flex items-center justify-center gap-2"
-                >
-                  <Clock className="w-4 h-4" />
-                  Check Status
-                </button>
-                <button
-                  onClick={() => onNavigate('home')}
-                  className="flex-1 btn-secondary"
-                >
-                  Back to Home
-                </button>
-              </div>
+              <button
+                onClick={() => onNavigate('status')}
+                className="w-full btn-primary flex items-center justify-center gap-2"
+              >
+                <Clock className="w-4 h-4" />
+                Check Status
+              </button>
             </div>
           </div>
         </div>
       </div>
     );
   }
+
+  // Show message if queue is paused or shop is closed
+  const showQueueMessage = shopSettings?.isClosed || shopSettings?.isPaused;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -208,19 +251,29 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
         <div className="max-w-md mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <button
-              onClick={() => onNavigate('home')}
-              className="flex items-center space-x-2 text-primary-300 hover:text-white transition-colors duration-200 mb-6"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
-            </button>
-            
             <div className="text-center">
               <h1 className="text-4xl font-bold text-white mb-2">Join the Queue</h1>
               <p className="text-primary-200">Fill in your details to get your virtual token</p>
             </div>
           </div>
+
+          {/* Queue Status Message */}
+          {showQueueMessage && (
+            <div className="card p-6 mb-6 bg-yellow-500/20 border-yellow-500/30">
+              <div className="text-center">
+                <p className="text-yellow-300 font-semibold text-lg mb-2">
+                  {shopSettings?.isClosed 
+                    ? 'Shop is closed for today' 
+                    : 'Queue is currently paused'}
+                </p>
+                <p className="text-yellow-200/80 text-sm">
+                  {shopSettings?.isClosed 
+                    ? 'Please come back tomorrow' 
+                    : 'New tokens are not being issued at the moment'}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Form */}
           <div className="card p-8">
@@ -348,9 +401,9 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || shopSettings?.isPaused || shopSettings?.isClosed}
                 className={`w-full py-4 rounded-xl font-semibold text-white transition-all duration-300 ${
-                  isSubmitting
+                  isSubmitting || shopSettings?.isPaused || shopSettings?.isClosed
                     ? 'bg-dark-600 cursor-not-allowed'
                     : 'btn-primary'
                 }`}

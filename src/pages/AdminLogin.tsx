@@ -17,11 +17,36 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToUser }) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login process
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store token in localStorage
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
       setIsLoading(false);
       onLogin();
-    }, 1500);
+    } catch (error) {
+      console.error('Login error:', error);
+      setIsLoading(false);
+      // You can add error toast here if needed
+    }
   };
 
   return (

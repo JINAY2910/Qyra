@@ -78,7 +78,7 @@ const QueueTable: React.FC<QueueTableProps> = ({
   }> = ({ onClick, icon, text, className = '' }) => (
     <button
       onClick={onClick}
-      className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors duration-200 ${className}`}
+      className={`btn-action flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors duration-200 ${className}`}
     >
       {icon}
       <span className="hidden sm:inline">{text}</span>

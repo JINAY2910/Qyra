@@ -61,24 +61,39 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
 
   const handleStartServing = async (item: QueueItem) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Move current serving back to queue if exists
-      if (serving) {
-        setQueue(prev => prev.map(q => 
-          q.id === serving.id ? { ...q, status: 'waiting' } : q
-        ));
-      }
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5001/api/queue/start/${item.id}`, {
+        method: 'PUT',
+        headers: token ? {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } : {
+          'Content-Type': 'application/json'
+        }
+      });
 
-      // Set new serving
-      setServing(item);
-      setQueue(prev => prev.map(q => 
-        q.id === item.id ? { ...q, status: 'serving' } : q
-      ));
-      
-      showToast(`Now serving Token #${item.tokenNumber}`, 'success');
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Move current serving back to queue if exists
+        if (serving) {
+          setQueue(prev => prev.map(q => 
+            q.id === serving.id ? { ...q, status: 'waiting' } : q
+          ));
+        }
+
+        // Set new serving
+        setServing(item);
+        setQueue(prev => prev.map(q => 
+          q.id === item.id ? { ...q, status: 'serving' } : q
+        ));
+        
+        showToast(`Now serving Token #${item.tokenNumber}`, 'success');
+      } else {
+        throw new Error(data.message || 'Failed to start serving');
+      }
     } catch (error) {
+      console.error('Error starting service:', error);
       showToast('Failed to start serving. Please try again.', 'error');
     }
     setSelectedAction(null);
@@ -86,8 +101,22 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
 
   const handleComplete = async (item: QueueItem) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5001/api/queue/complete/${item.id}`, {
+        method: 'PUT',
+        headers: token ? {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } : {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to complete service');
+      }
       
       setQueue(prev => prev.map(q => 
         q.id === item.id ? { ...q, status: 'completed' } : q
@@ -100,6 +129,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
       
       showToast(`Token #${item.tokenNumber} completed!`, 'success');
     } catch (error) {
+      console.error('Error completing service:', error);
       showToast('Failed to complete service. Please try again.', 'error');
     }
     setSelectedAction(null);
@@ -123,18 +153,33 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
 
   const handleRemove = async (item: QueueItem) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setQueue(prev => prev.filter(q => q.id !== item.id));
-      
-      // Clear serving if this was the current item
-      if (serving && serving.id === item.id) {
-        setServing(null);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5001/api/queue/${item.id}`, {
+        method: 'DELETE',
+        headers: token ? {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } : {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setQueue(prev => prev.filter(q => q.id !== item.id));
+        
+        // Clear serving if this was the current item
+        if (serving && serving.id === item.id) {
+          setServing(null);
+        }
+        
+        showToast(`Token #${item.tokenNumber} removed from queue`, 'success');
+      } else {
+        throw new Error(data.message || 'Failed to remove from queue');
       }
-      
-      showToast(`Token #${item.tokenNumber} removed from queue`, 'info');
     } catch (error) {
+      console.error('Error removing customer:', error);
       showToast('Failed to remove from queue. Please try again.', 'error');
     }
     setSelectedAction(null);
@@ -255,7 +300,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm">Avg Wait Time</p>
+                  <p className="text-purple-100 text-sm">Avg Time Per Customer</p>
                   <p className="text-2xl font-bold">{avgWaitTime}</p>
                 </div>
                 <Clock className="w-8 h-8 text-purple-200" />
