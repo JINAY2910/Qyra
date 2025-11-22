@@ -106,8 +106,8 @@ Content-Type: application/json
   "email": "john@example.com",
   "type": "Walk-in"
 }
-Allowed values for "type": "Walk-in" | "VIP" | "Senior"
 ```
+Note: Allowed values for "type": "Walk-in" | "VIP" | "Senior"
 
 **Response:**
 ```json
@@ -119,11 +119,9 @@ Allowed values for "type": "Walk-in" | "VIP" | "Senior"
     "name": "John Doe",
     "type": "Walk-in",
     "position": 3,
-    "estimatedWait": "15-21 minutes"
   }
 }
 ```
-Note: The backend uses `avgTimePerCustomer` (stored in the User/Admin document) to compute estimated wait times.
 
 #### Get Queue Status
 ```http
@@ -199,7 +197,8 @@ Content-Type: application/json
     "id": "65a1b2c3d4e5f6g7h8i9j0k1",
     "name": "Admin",
     "email": "admin@qyra.com",
-    "role": "admin"
+    "role": "admin",
+    "avgTimePerCustomer": "10"
   }
 }
 ```
