@@ -37,7 +37,7 @@ Complete backend API for the Qyra queue management system.
 Edit the `.env` file and replace `<PASSWORD>` with your actual MongoDB Atlas password:
 
 ```env
-MONGO_URI=mongodb+srv://USERNAME:PASSWORD@cluster0.example.mongodb.net/DATABASE_NAME
+MONGO_URI=<your_connection_string_here>g
 JWT_SECRET=supersecretkey
 PORT=5000
 ```
