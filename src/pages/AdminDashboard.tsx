@@ -42,7 +42,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
     const fetchQueueStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5001/api/settings', {
+        const response = await fetch('https://qyra.onrender.com/api/settings', {
           headers: token ? {
             'Authorization': `Bearer ${token}`
           } : {}
@@ -66,7 +66,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   const fetchQueueList = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/queue/list', {
+      const response = await fetch('https://qyra.onrender.com/api/queue/list', {
         headers: token ? {
           'Authorization': `Bearer ${token}`
         } : {}
@@ -108,7 +108,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/settings/update', {
+      const response = await fetch('https://qyra.onrender.com/api/settings/update', {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -161,7 +161,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   const handleStartServing = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/start/${id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/start/${id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -189,7 +189,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   const handleComplete = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/complete/${id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/complete/${id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -229,7 +229,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/${id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/${id}`, {
         method: 'DELETE',
         headers: token ? {
           'Authorization': `Bearer ${token}`,

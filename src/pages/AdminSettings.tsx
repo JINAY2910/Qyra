@@ -68,7 +68,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
     const fetchSettings = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5001/api/settings', {
+        const response = await fetch('https://qyra.onrender.com/api/settings', {
           headers: token ? {
             'Authorization': `Bearer ${token}`
           } : {}
@@ -97,7 +97,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
     setIsSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/settings/update', {
+      const response = await fetch('https://qyra.onrender.com/api/settings/update', {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,

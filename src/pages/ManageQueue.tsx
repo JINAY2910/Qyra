@@ -62,7 +62,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleStartServing = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/start/${item.id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/start/${item.id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -102,7 +102,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleComplete = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/complete/${item.id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/complete/${item.id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -154,7 +154,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleRemove = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/queue/${item.id}`, {
+      const response = await fetch(`https://qyra.onrender.com/api/queue/${item.id}`, {
         method: 'DELETE',
         headers: token ? {
           'Authorization': `Bearer ${token}`,

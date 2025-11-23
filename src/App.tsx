@@ -25,7 +25,7 @@ function App() {
   useEffect(() => {
     const checkMaintenanceMode = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/settings/public');
+        const response = await fetch('https://qyra.onrender.com/api/settings/public');
         const data = await response.json();
         if (response.ok && data.success) {
           setIsMaintenanceMode(data.data.isMaintenanceMode);

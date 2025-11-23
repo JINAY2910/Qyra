@@ -45,7 +45,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/settings/public');
+        const response = await fetch('https://qyra.onrender.com/api/settings/public');
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -122,7 +122,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
         'senior': 'Senior'
       };
       
-      const response = await fetch('http://localhost:5001/api/queue/join', {
+      const response = await fetch('https://qyra.onrender.com/api/queue/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
