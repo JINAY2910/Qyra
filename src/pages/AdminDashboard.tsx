@@ -13,7 +13,10 @@ import {
   UserCheck,
   Crown,
   Heart,
-  Trash2
+  Trash2,
+  Phone,
+  Mail,
+  X
 } from 'lucide-react';
 import QyraLogo from '../components/QyraLogo';
 
@@ -25,6 +28,8 @@ interface QueueItem {
   priority: number;
   joinTime: string;
   status: 'waiting' | 'serving' | 'completed';
+  phone?: string;
+  email?: string;
 }
 
 interface AdminDashboardProps {
@@ -36,6 +41,7 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, showToast }) => {
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [isQueuePaused, setIsQueuePaused] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
 
   // Fetch queue pause status from backend
   useEffect(() => {
@@ -86,7 +92,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
             hour: '2-digit', 
             minute: '2-digit' 
           }),
-          status: item.status
+          status: item.status,
+          phone: item.phone,
+          email: item.email
         }));
         setQueue(mappedQueue);
       }
@@ -261,6 +269,78 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
 
   const currentlyServing = queue.find(item => item.status === 'serving');
   const waitingQueue = queue.filter(item => item.status === 'waiting').sort((a, b) => a.priority - b.priority);
+  const selectedContact = selectedContactId ? queue.find(item => item.id === selectedContactId) : null;
+
+  // Contact Details Modal Component
+  const ContactDetailsModal = ({ customer, onClose }: { customer: QueueItem; onClose: () => void }) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div 
+        className="relative glass-dark rounded-2xl p-6 max-w-md w-full shadow-2xl border border-primary-500/30"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-dark-400 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Header */}
+        <div className="mb-6">
+          <h3 className="text-2xl font-bold text-white font-poppins mb-1">Contact Details</h3>
+          <p className="text-dark-400 text-sm">Customer Information</p>
+        </div>
+
+        {/* Customer Info */}
+        <div className="space-y-4 mb-6">
+          <div className="glass rounded-xl p-4">
+            <p className="text-dark-400 text-xs mb-1">Name</p>
+            <p className="text-white font-semibold text-lg">{customer.name}</p>
+          </div>
+
+          <div className="glass rounded-xl p-4">
+            <p className="text-dark-400 text-xs mb-1">Phone Number</p>
+            <p className="text-white font-semibold">{customer.phone || 'Not provided'}</p>
+          </div>
+
+          <div className="glass rounded-xl p-4">
+            <p className="text-dark-400 text-xs mb-1">Email Address</p>
+            <p className="text-white font-semibold break-all">{customer.email || 'Not provided'}</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          {customer.phone && (
+            <a
+              href={`tel:${customer.phone}`}
+              className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <Phone className="w-5 h-5" />
+              Call
+            </a>
+          )}
+          {customer.email && (
+            <a
+              href={`mailto:${customer.email}`}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <Mail className="w-5 h-5" />
+              Email
+            </a>
+          )}
+        </div>
+
+        {(!customer.phone && !customer.email) && (
+          <div className="text-center text-dark-400 text-sm">
+            No contact information available
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-dark-950">
@@ -472,6 +552,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
                           </button>
                         )}
                         <button
+                          onClick={() => setSelectedContactId(item.id)}
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition-colors flex items-center gap-1"
+                          title="View contact details"
+                        >
+                          <Phone className="w-3 h-3" />
+                          Contact
+                        </button>
+                        <button
                           onClick={() => handleRemove(item.id)}
                           className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg transition-colors flex items-center gap-1"
                           title="Remove from queue"
@@ -488,6 +576,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
           </div>
         </div>
       </div>
+
+      {/* Contact Details Modal */}
+      {selectedContact && (
+        <ContactDetailsModal 
+          customer={selectedContact} 
+          onClose={() => setSelectedContactId(null)} 
+        />
+      )}
     </div>
   );
 };
