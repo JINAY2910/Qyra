@@ -37,7 +37,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-600/5 rounded-full blur-3xl animate-float"></div>
 
       {/* Hero Section */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Content */}
@@ -50,7 +50,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
               <p className="text-lg text-dark-300 mt-6 max-w-2xl leading-relaxed">
                 Experience the future of queue management with our intelligent system that puts customers first and gives businesses complete control.
               </p>
-              
+
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center lg:justify-start">
                 <button
@@ -86,10 +86,10 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
             <div className="flex justify-center lg:justify-center">
               <div className="relative w-full max-w-xl">
                 <div className="w-full card p-12 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                  <div className="bg-gradient-to-br from-primary-500/20 to-primary-700/20 rounded-2xl flex flex-col items-center justify-center relative overflow-visible min-h-[450px]">
+                  <div className="bg-gradient-to-br from-primary-500/20 to-primary-700/20 rounded-2xl flex flex-col items-center justify-center relative overflow-visible min-h-[350px] sm:min-h-[450px]">
                     {/* Animated Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-400/10 to-primary-600/10 animate-pulse rounded-2xl"></div>
-                    
+
                     <div className="text-center relative z-10 w-full">
                       <div className="w-48 h-48 mx-auto bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mb-10 animate-glow">
                         <Users className="w-24 h-24 text-white" />
@@ -106,19 +106,19 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
                           Priority Handling
                         </span>
                       </div>
-                      
+
                       {/* Floating Elements */}
                       <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary-400 rounded-full animate-float"></div>
                       <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-primary-300 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Floating Cards */}
-                <div className="absolute -top-8 -left-8 w-24 h-24 glass rounded-xl flex items-center justify-center animate-float">
+                <div className="hidden sm:flex absolute -top-8 -left-8 w-24 h-24 glass rounded-xl items-center justify-center animate-float">
                   <Clock className="w-10 h-10 text-primary-400" />
                 </div>
-                <div className="absolute -bottom-8 -right-8 w-24 h-24 glass rounded-xl flex items-center justify-center animate-float" style={{ animationDelay: '2s' }}>
+                <div className="hidden sm:flex absolute -bottom-8 -right-8 w-24 h-24 glass rounded-xl items-center justify-center animate-float" style={{ animationDelay: '2s' }}>
                   <Zap className="w-10 h-10 text-primary-400" />
                 </div>
               </div>
@@ -128,7 +128,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 py-20">
+      <section className="relative z-10 py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
@@ -166,7 +166,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 py-20">
+      <section className="relative z-10 py-12 sm:py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="card p-12 bg-gradient-to-br from-primary-600/20 to-primary-800/20 border-primary-500/30">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Settings, 
-  LogOut, 
+import {
+  Settings,
+  LogOut,
   LayoutDashboard,
   Pause,
   XCircle,
@@ -20,15 +20,15 @@ interface AdminSettingsProps {
 const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, showToast }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Shop settings
   const [isPaused, setIsPaused] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
-  
+
   // Admin settings
   const [avgTimePerCustomer, setAvgTimePerCustomer] = useState(10);
-  
+
   // Mutually exclusive toggles
   const togglePaused = () => {
     setIsPaused(prev => {
@@ -62,7 +62,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
       return next;
     });
   };
-  
+
   // Fetch settings on mount
   useEffect(() => {
     const fetchSettings = async () => {
@@ -140,24 +140,29 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
   return (
     <div className="min-h-screen bg-dark-950">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 glass-dark z-20">
-        <div className="p-6">
+      <div className="md:fixed md:left-0 md:top-0 md:h-full md:w-64 w-full h-auto relative glass-dark z-20">
+        <div className="p-4 md:p-6">
           {/* Logo */}
-          <div className="mb-8">
-            <QyraLogo size="sm" />
-            <p className="text-xs text-dark-400 mt-2 ml-1">Admin Panel</p>
+          <div className="mb-4 md:mb-8 flex items-center justify-between md:block">
+            <div className="flex items-center gap-3">
+              <QyraLogo size="sm" showText={false} />
+              <div className="flex flex-col">
+                <span className="font-bold text-xl text-white leading-none">Qyra</span>
+                <span className="text-xs text-dark-400">Admin Panel</span>
+              </div>
+            </div>
           </div>
 
           {/* Navigation */}
-          <nav className="space-y-2">
+          <nav className="flex md:flex-col gap-2 md:space-y-2 overflow-x-auto pb-2 md:pb-0">
             <button
               onClick={() => onNavigate('dashboard')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-dark-300 hover:bg-dark-800/50 hover:text-white transition-all duration-300"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-dark-300 hover:bg-dark-800/50 hover:text-white transition-all duration-300 whitespace-nowrap"
             >
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-600 text-white transition-all duration-300">
+            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-600 text-white transition-all duration-300 whitespace-nowrap">
               <Settings className="w-5 h-5" />
               Settings
             </button>
@@ -165,7 +170,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
         </div>
 
         {/* Logout Button */}
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="md:absolute md:bottom-6 md:left-6 md:right-6 relative bottom-auto left-auto right-auto px-4 pb-4 md:px-0 md:pb-0">
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300"
@@ -177,14 +182,14 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 p-6">
+      <div className="md:ml-64 ml-0 p-4 md:p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white font-poppins">Settings</h1>
           <p className="text-dark-300 mt-2">Manage your shop settings and preferences</p>
         </div>
 
-        
+
         {/* Shop Closure & Maintenance Mode Section */}
         <div className="card mb-6">
           <div className="flex items-center gap-3 mb-6">
@@ -194,9 +199,9 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
 
           <div className="space-y-6">
             {/* Pause Queue Toggle */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
               <div className="flex items-center gap-3">
-                <Pause className="w-5 h-5 text-yellow-400" />
+                <Pause className="w-5 h-5 text-yellow-400 flex-shrink-0" />
                 <div>
                   <label className="text-white font-medium">Pause Queue</label>
                   <p className="text-sm text-dark-300">Stop new tokens from being issued</p>
@@ -204,22 +209,20 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
               </div>
               <button
                 onClick={togglePaused}
-                className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
-                  isPaused ? 'bg-yellow-600' : 'bg-dark-700'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-300 flex-shrink-0 ${isPaused ? 'bg-yellow-600' : 'bg-dark-700'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${
-                    isPaused ? 'translate-x-6' : 'translate-x-0'
-                  }`}
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${isPaused ? 'translate-x-6' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
 
             {/* Close Shop Toggle */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
               <div className="flex items-center gap-3">
-                <XCircle className="w-5 h-5 text-red-400" />
+                <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
                 <div>
                   <label className="text-white font-medium">Close Shop for Today</label>
                   <p className="text-sm text-dark-300">Disable all new queue activity</p>
@@ -227,22 +230,20 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
               </div>
               <button
                 onClick={toggleClosed}
-                className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
-                  isClosed ? 'bg-red-600' : 'bg-dark-700'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-300 flex-shrink-0 ${isClosed ? 'bg-red-600' : 'bg-dark-700'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${
-                    isClosed ? 'translate-x-6' : 'translate-x-0'
-                  }`}
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${isClosed ? 'translate-x-6' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
 
             {/* Maintenance Mode Toggle */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
               <div className="flex items-center gap-3">
-                <Wrench className="w-5 h-5 text-orange-400" />
+                <Wrench className="w-5 h-5 text-orange-400 flex-shrink-0" />
                 <div>
                   <label className="text-white font-medium">Maintenance Mode</label>
                   <p className="text-sm text-dark-300">Block all user pages, show maintenance message</p>
@@ -250,14 +251,12 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
               </div>
               <button
                 onClick={toggleMaintenance}
-                className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
-                  isMaintenanceMode ? 'bg-orange-600' : 'bg-dark-700'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-300 flex-shrink-0 ${isMaintenanceMode ? 'bg-orange-600' : 'bg-dark-700'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${
-                    isMaintenanceMode ? 'translate-x-6' : 'translate-x-0'
-                  }`}
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${isMaintenanceMode ? 'translate-x-6' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -300,9 +299,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className={`btn-primary flex items-center gap-2 ${
-              isSaving ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`btn-primary flex items-center gap-2 ${isSaving ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             <Save className="w-5 h-5" />
             {isSaving ? 'Saving...' : 'Save Settings'}

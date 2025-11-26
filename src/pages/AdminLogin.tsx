@@ -16,7 +16,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToUser }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('https://qyra.onrender.com/api/auth/login', {
         method: 'POST',
@@ -55,19 +55,20 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToUser }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-dark-900 to-primary-800/20"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
-      
+
       {/* Back Button */}
       <button
         onClick={onBackToUser}
-        className="absolute top-6 left-6 btn-secondary flex items-center gap-2 z-10"
+        className="absolute top-4 left-4 md:top-6 md:left-6 btn-secondary flex items-center gap-2 z-10"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to User View
+        <span className="hidden sm:inline">Back to User View</span>
+        <span className="sm:hidden">Back</span>
       </button>
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="card p-8 space-y-6">
+        <div className="card p-6 md:p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-6">
             <div className="flex justify-center">
@@ -95,7 +96,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToUser }) => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-dark-200 mb-2">
                   Password

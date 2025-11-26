@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Settings, 
-  LogOut, 
-  Users, 
-  Clock, 
-  CheckCircle, 
+import {
+  LayoutDashboard,
+  Settings,
+  LogOut,
+  Users,
+  Clock,
+  CheckCircle,
   Star,
   Play,
   Pause,
@@ -88,9 +88,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
           name: item.name,
           type: item.customerType || item.type.toLowerCase().replace('-', '-') as 'walk-in' | 'vip' | 'senior',
           priority: item.priority || item.priorityLevel,
-          joinTime: new Date(item.joinedAt || item.createdAt).toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+          joinTime: new Date(item.joinedAt || item.createdAt).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
           }),
           status: item.status,
           phone: item.phone,
@@ -113,7 +113,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   const handleQueueToggle = async () => {
     // Toggle pause state: if currently paused, resume it; if active, pause it
     const newPauseState = !isQueuePaused;
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('https://qyra.onrender.com/api/settings/update', {
@@ -134,7 +134,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
       if (response.ok && data.success) {
         // Update local state with the new pause status
         setIsQueuePaused(newPauseState);
-        
+
         // Show appropriate message based on the action taken
         if (newPauseState) {
           showToast('Queue paused', 'success');
@@ -210,7 +210,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setQueue(prev => prev.map(item => 
+        setQueue(prev => prev.map(item =>
           item.id === id ? { ...item, status: 'completed' as const } : item
         ));
         showToast('Customer served successfully', 'success');
@@ -224,7 +224,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   };
 
   const handleSkip = (id: string) => {
-    setQueue(prev => prev.map(item => 
+    setQueue(prev => prev.map(item =>
       item.id === id ? { ...item, status: 'waiting' as const } : item
     ));
     showToast('Customer skipped', 'info');
@@ -275,7 +275,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   const ContactDetailsModal = ({ customer, onClose }: { customer: QueueItem; onClose: () => void }) => (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div 
+      <div
         className="relative glass-dark rounded-2xl p-6 max-w-md w-full shadow-2xl border border-primary-500/30"
         onClick={(e) => e.stopPropagation()}
       >
@@ -345,25 +345,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
   return (
     <div className="min-h-screen bg-dark-950">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 glass-dark z-20">
-        <div className="p-6">
+      <div className="md:fixed md:left-0 md:top-0 md:h-full md:w-64 w-full h-auto relative glass-dark z-20">
+        <div className="p-4 md:p-6">
           {/* Logo */}
-          <div className="mb-8">
-            <QyraLogo size="sm" />
-            <p className="text-xs text-dark-400 mt-2 ml-1">Admin Panel</p>
+          <div className="mb-4 md:mb-8 flex items-center justify-between md:block">
+            <div className="flex items-center gap-3">
+              <QyraLogo size="sm" showText={false} />
+              <div className="flex flex-col">
+                <span className="font-bold text-xl text-white leading-none">Qyra</span>
+                <span className="text-xs text-dark-400">Admin Panel</span>
+              </div>
+            </div>
+            {/* Mobile Logout (optional, or keep at bottom) - keeping at bottom for now but relative */}
           </div>
 
           {/* Navigation */}
-          <nav className="space-y-2">
+          <nav className="flex md:flex-col gap-2 md:space-y-2 overflow-x-auto pb-2 md:pb-0">
             <button
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-600 text-white transition-all duration-300"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-600 text-white transition-all duration-300 whitespace-nowrap"
             >
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
             </button>
             <button
               onClick={() => onNavigate('settings')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-dark-300 hover:bg-dark-800/50 hover:text-white transition-all duration-300"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-dark-300 hover:bg-dark-800/50 hover:text-white transition-all duration-300 whitespace-nowrap"
             >
               <Settings className="w-5 h-5" />
               Settings
@@ -372,7 +378,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
         </div>
 
         {/* Logout Button */}
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="md:absolute md:bottom-6 md:left-6 md:right-6 relative bottom-auto left-auto right-auto px-4 pb-4 md:px-0 md:pb-0">
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300"
@@ -384,10 +390,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 p-6">
+      <div className="md:ml-64 ml-0 p-4 md:p-6">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 text-center md:text-left">
             <div>
               <h1 className="text-3xl font-bold text-white font-poppins">Welcome back, Admin!</h1>
               <p className="text-dark-300 mt-2">Manage your queue efficiently</p>
@@ -395,11 +401,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
             <div className="flex items-center gap-4">
               <button
                 onClick={handleQueueToggle}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-                  !isQueuePaused 
-                    ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
-                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${!isQueuePaused
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                  : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                  }`}
               >
                 {!isQueuePaused ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                 {!isQueuePaused ? 'Queue Active' : 'Queue Paused'}
@@ -421,7 +426,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
               </div>
             </div>
           </div>
-          
+
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
@@ -433,8 +438,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
               </div>
             </div>
           </div>
-          
-          
+
+
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
@@ -453,8 +458,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Currently Serving</h2>
             <div className="card bg-gradient-to-r from-primary-600/20 to-primary-700/20 border-primary-500/30">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
+                <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
                   <div className="w-auto min-w-24 h-16 bg-primary-600 rounded-2xl flex items-center justify-center px-4 text-2xl font-bold text-white animate-pulse whitespace-nowrap">
                     {currentlyServing.token}
                   </div>
@@ -525,11 +530,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
                     </td>
                     <td className="py-4 px-4 text-dark-300">{item.joinTime}</td>
                     <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                        item.status === 'serving' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${item.status === 'serving' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
                         item.status === 'waiting' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
-                        'bg-gray-500/20 text-gray-300 border border-gray-500/30'
-                      }`}>
+                          'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                        }`}>
                         {item.status.toUpperCase()}
                       </span>
                     </td>
@@ -579,9 +583,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout, s
 
       {/* Contact Details Modal */}
       {selectedContact && (
-        <ContactDetailsModal 
-          customer={selectedContact} 
-          onClose={() => setSelectedContactId(null)} 
+        <ContactDetailsModal
+          customer={selectedContact}
+          onClose={() => setSelectedContactId(null)}
         />
       )}
     </div>

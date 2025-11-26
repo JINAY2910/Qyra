@@ -31,7 +31,7 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
             'VIP': 'vip',
             'Senior': 'senior'
           };
-          
+
           setServing({
             id: data.data.id,
             tokenNumber: data.data.tokenNumber,
@@ -181,8 +181,8 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
   }, [onFullscreenChange]);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
     });
@@ -208,8 +208,8 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
         <div className="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        
-        <div className="relative z-10 flex flex-col h-full p-6">
+
+        <div className="relative z-10 flex flex-col h-full p-4 md:p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6 flex-shrink-0">
             <div className="flex items-center space-x-6">
@@ -237,93 +237,93 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
 
           {/* Currently Serving (hide when closed) */}
           {!isClosed && (
-          <div className="text-center mb-8 flex-shrink-0">
-            <h2 className="text-5xl font-bold mb-6 text-white">Now Serving</h2>
-            {serving ? (
-              <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-3xl p-12 mx-auto max-w-5xl border-2 border-primary-400">
-                <div className="text-8xl font-bold mb-4">#{serving.tokenNumber}</div>
-                <div className="text-3xl mb-4">{serving.name}</div>
-                <div className="flex items-center justify-center gap-3">
-                  {(() => {
-                    const typeInfo = getCustomerTypeInfo(serving.customerType);
-                    const Icon = typeInfo.icon;
-                    return (
-                      <>
-                        <Icon className={`w-7 h-7 ${typeInfo.iconClass}`} />
-                        <span className={`text-xl ${typeInfo.textClass}`}>
-                          {typeInfo.label} Customer
-                        </span>
-                      </>
-                    );
-                  })()}
+            <div className="text-center mb-8 flex-shrink-0">
+              <h2 className="text-5xl font-bold mb-6 text-white">Now Serving</h2>
+              {serving ? (
+                <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-3xl p-6 md:p-12 mx-auto max-w-5xl border-2 border-primary-400">
+                  <div className="text-8xl font-bold mb-4">#{serving.tokenNumber}</div>
+                  <div className="text-3xl mb-4">{serving.name}</div>
+                  <div className="flex items-center justify-center gap-3">
+                    {(() => {
+                      const typeInfo = getCustomerTypeInfo(serving.customerType);
+                      const Icon = typeInfo.icon;
+                      return (
+                        <>
+                          <Icon className={`w-7 h-7 ${typeInfo.iconClass}`} />
+                          <span className={`text-xl ${typeInfo.textClass}`}>
+                            {typeInfo.label} Customer
+                          </span>
+                        </>
+                      );
+                    })()}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="glass-dark rounded-3xl p-12 mx-auto max-w-5xl">
-                <div className="text-6xl font-bold mb-4 text-dark-300">No one being served</div>
-                <div className="text-2xl text-dark-400">Please wait for the next customer</div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="glass-dark rounded-3xl p-6 md:p-12 mx-auto max-w-5xl">
+                  <div className="text-6xl font-bold mb-4 text-dark-300">No one being served</div>
+                  <div className="text-2xl text-dark-400">Please wait for the next customer</div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Next in Queue (hide when closed) */}
           {!isClosed && (
-          <div className="flex-1 flex flex-col justify-center overflow-hidden">
-            <h3 className="text-4xl font-bold text-center mb-6 text-white flex-shrink-0">Next in Queue</h3>
-            {queue.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-7xl mx-auto flex-shrink-0">
-                {queue.map((item, index) => {
-                  const typeInfo = getCustomerTypeInfo(item.customerType);
-                  const Icon = typeInfo.icon;
-                  const position = index + 1;
-                  const positionColors = [
-                    'from-yellow-500/20 to-yellow-600/30 border-yellow-400/40',
-                    'from-gray-400/20 to-gray-500/30 border-gray-300/40',
-                    'from-orange-500/20 to-orange-600/30 border-orange-400/40',
-                    'from-blue-500/20 to-blue-600/30 border-blue-400/40',
-                    'from-purple-500/20 to-purple-600/30 border-purple-400/40',
-                    'from-pink-500/20 to-pink-600/30 border-pink-400/40',
-                  ];
-                  const positionColor = positionColors[index] || positionColors[5];
-                  
-                  return (
-                    <div
-                      key={item.id}
-                      className={`relative bg-gradient-to-br ${positionColor} backdrop-blur-md rounded-2xl p-4 text-center hover:scale-110 transition-all duration-300 shadow-2xl border-2 hover:shadow-primary-500/50 group min-w-0`}
-                    >
-                      {/* Position Badge */}
-                      <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white/20">
-                        {position}
+            <div className="flex-1 flex flex-col justify-center overflow-hidden">
+              <h3 className="text-4xl font-bold text-center mb-6 text-white flex-shrink-0">Next in Queue</h3>
+              {queue.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-7xl mx-auto flex-shrink-0">
+                  {queue.map((item, index) => {
+                    const typeInfo = getCustomerTypeInfo(item.customerType);
+                    const Icon = typeInfo.icon;
+                    const position = index + 1;
+                    const positionColors = [
+                      'from-yellow-500/20 to-yellow-600/30 border-yellow-400/40',
+                      'from-gray-400/20 to-gray-500/30 border-gray-300/40',
+                      'from-orange-500/20 to-orange-600/30 border-orange-400/40',
+                      'from-blue-500/20 to-blue-600/30 border-blue-400/40',
+                      'from-purple-500/20 to-purple-600/30 border-purple-400/40',
+                      'from-pink-500/20 to-pink-600/30 border-pink-400/40',
+                    ];
+                    const positionColor = positionColors[index] || positionColors[5];
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative bg-gradient-to-br ${positionColor} backdrop-blur-md rounded-2xl p-4 text-center hover:scale-110 transition-all duration-300 shadow-2xl border-2 hover:shadow-primary-500/50 group min-w-0`}
+                      >
+                        {/* Position Badge */}
+                        <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white/20">
+                          {position}
+                        </div>
+
+                        {/* Token Number */}
+                        <div className="text-2xl font-bold mb-2 text-primary-300 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap overflow-visible min-w-0">
+                          #{item.tokenNumber}
+                        </div>
+
+                        {/* Name */}
+                        <div className="queue-next-name text-base font-semibold mb-2 truncate drop-shadow-lg">
+                          {item.name}
+                        </div>
+
+                        {/* Customer Type */}
+                        <div className="queue-next-type flex items-center justify-center gap-1.5 bg-white/5 rounded-full px-2.5 py-1 backdrop-blur-sm">
+                          <Icon className={`w-4 h-4 ${typeInfo.iconClass} drop-shadow-lg`} />
+                          <span className={`text-xs font-medium ${typeInfo.textClass}`}>
+                            {typeInfo.label}
+                          </span>
+                        </div>
                       </div>
-                      
-                      {/* Token Number */}
-                      <div className="text-2xl font-bold mb-2 text-primary-300 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap overflow-visible min-w-0">
-                        #{item.tokenNumber}
-                      </div>
-                      
-                      {/* Name */}
-                      <div className="queue-next-name text-base font-semibold mb-2 truncate drop-shadow-lg">
-                        {item.name}
-                      </div>
-                      
-                      {/* Customer Type */}
-                      <div className="queue-next-type flex items-center justify-center gap-1.5 bg-white/5 rounded-full px-2.5 py-1 backdrop-blur-sm">
-                        <Icon className={`w-4 h-4 ${typeInfo.iconClass} drop-shadow-lg`} />
-                        <span className={`text-xs font-medium ${typeInfo.textClass}`}>
-                          {typeInfo.label}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center text-2xl text-dark-400 flex-shrink-0">
-                No customers waiting
-              </div>
-            )}
-          </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center text-2xl text-dark-400 flex-shrink-0">
+                  No customers waiting
+                </div>
+              )}
+            </div>
           )}
 
           {/* Exit Fullscreen */}
@@ -345,7 +345,7 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
       <div className="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
-      
+
       <div className="relative z-10">
         {/* Header */}
         <div className="glass-dark border-b border-dark-700/50">
@@ -386,95 +386,95 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
 
           {/* Currently Serving (hide when closed) */}
           {!isClosed && (
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-8 text-white">Now Serving</h2>
-            {serving ? (
-              <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-12 text-white mx-auto max-w-2xl shadow-xl border-2 border-primary-400">
-                <div className="text-7xl font-bold mb-4">#{serving.tokenNumber}</div>
-                <div className="text-2xl mb-3">{serving.name}</div>
-                <div className="flex items-center justify-center gap-2">
-                  {(() => {
-                    const typeInfo = getCustomerTypeInfo(serving.customerType);
-                    const Icon = typeInfo.icon;
-                    return (
-                      <>
-                        <Icon className={`w-6 h-6 ${typeInfo.iconClass}`} />
-                        <span className={`text-lg ${typeInfo.textClass}`}>
-                          {typeInfo.label} Customer
-                        </span>
-                      </>
-                    );
-                  })()}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold mb-8 text-white">Now Serving</h2>
+              {serving ? (
+                <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 md:p-12 text-white mx-auto max-w-2xl shadow-xl border-2 border-primary-400">
+                  <div className="text-7xl font-bold mb-4">#{serving.tokenNumber}</div>
+                  <div className="text-2xl mb-3">{serving.name}</div>
+                  <div className="flex items-center justify-center gap-2">
+                    {(() => {
+                      const typeInfo = getCustomerTypeInfo(serving.customerType);
+                      const Icon = typeInfo.icon;
+                      return (
+                        <>
+                          <Icon className={`w-6 h-6 ${typeInfo.iconClass}`} />
+                          <span className={`text-lg ${typeInfo.textClass}`}>
+                            {typeInfo.label} Customer
+                          </span>
+                        </>
+                      );
+                    })()}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="card mx-auto max-w-2xl">
-                <Users className="w-16 h-16 text-dark-400 mx-auto mb-4" />
-                <div className="text-3xl font-bold mb-2 text-white">No one being served</div>
-                <div className="text-lg text-dark-300">Please wait for the next customer</div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="card mx-auto max-w-2xl">
+                  <Users className="w-16 h-16 text-dark-400 mx-auto mb-4" />
+                  <div className="text-3xl font-bold mb-2 text-white">No one being served</div>
+                  <div className="text-lg text-dark-300">Please wait for the next customer</div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Next in Queue (hide when closed) */}
           {!isClosed && (
-          <div>
-            <h3 className="text-3xl font-bold text-center mb-8 text-white">Next in Queue</h3>
-            {queue.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                {queue.map((item, index) => {
-                  const typeInfo = getCustomerTypeInfo(item.customerType);
-                  const Icon = typeInfo.icon;
-                  const position = index + 1;
-                  const positionColors = [
-                    'from-yellow-500/20 to-yellow-600/30 border-yellow-400/40',
-                    'from-gray-400/20 to-gray-500/30 border-gray-300/40',
-                    'from-orange-500/20 to-orange-600/30 border-orange-400/40',
-                    'from-blue-500/20 to-blue-600/30 border-blue-400/40',
-                    'from-purple-500/20 to-purple-600/30 border-purple-400/40',
-                    'from-pink-500/20 to-pink-600/30 border-pink-400/40',
-                  ];
-                  const positionColor = positionColors[index] || positionColors[5];
-                  
-                  return (
-                    <div
-                      key={item.id}
-                      className={`relative bg-gradient-to-br ${positionColor} backdrop-blur-md rounded-2xl p-5 text-center hover:scale-110 transition-all duration-300 shadow-xl border-2 hover:shadow-primary-500/50 group min-w-0`}
-                    >
-                      {/* Position Badge */}
-                      <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white/20">
-                        {position}
+            <div>
+              <h3 className="text-3xl font-bold text-center mb-8 text-white">Next in Queue</h3>
+              {queue.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                  {queue.map((item, index) => {
+                    const typeInfo = getCustomerTypeInfo(item.customerType);
+                    const Icon = typeInfo.icon;
+                    const position = index + 1;
+                    const positionColors = [
+                      'from-yellow-500/20 to-yellow-600/30 border-yellow-400/40',
+                      'from-gray-400/20 to-gray-500/30 border-gray-300/40',
+                      'from-orange-500/20 to-orange-600/30 border-orange-400/40',
+                      'from-blue-500/20 to-blue-600/30 border-blue-400/40',
+                      'from-purple-500/20 to-purple-600/30 border-purple-400/40',
+                      'from-pink-500/20 to-pink-600/30 border-pink-400/40',
+                    ];
+                    const positionColor = positionColors[index] || positionColors[5];
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative bg-gradient-to-br ${positionColor} backdrop-blur-md rounded-2xl p-5 text-center hover:scale-110 transition-all duration-300 shadow-xl border-2 hover:shadow-primary-500/50 group min-w-0`}
+                      >
+                        {/* Position Badge */}
+                        <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white/20">
+                          {position}
+                        </div>
+
+                        {/* Token Number */}
+                        <div className="text-2xl font-bold mb-2 text-primary-300 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap overflow-visible min-w-0">
+                          #{item.tokenNumber}
+                        </div>
+
+                        {/* Name */}
+                        <div className="text-base font-semibold mb-2 truncate text-white drop-shadow-md">
+                          {item.name}
+                        </div>
+
+                        {/* Customer Type */}
+                        <div className="flex items-center justify-center gap-1.5 bg-white/5 rounded-full px-2.5 py-1 backdrop-blur-sm">
+                          <Icon className={`w-4 h-4 ${typeInfo.iconClass} drop-shadow-md`} />
+                          <span className={`text-xs font-medium ${typeInfo.textClass}`}>
+                            {typeInfo.label}
+                          </span>
+                        </div>
                       </div>
-                      
-                      {/* Token Number */}
-                      <div className="text-2xl font-bold mb-2 text-primary-300 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap overflow-visible min-w-0">
-                        #{item.tokenNumber}
-                      </div>
-                      
-                      {/* Name */}
-                      <div className="text-base font-semibold mb-2 truncate text-white drop-shadow-md">
-                        {item.name}
-                      </div>
-                      
-                      {/* Customer Type */}
-                      <div className="flex items-center justify-center gap-1.5 bg-white/5 rounded-full px-2.5 py-1 backdrop-blur-sm">
-                        <Icon className={`w-4 h-4 ${typeInfo.iconClass} drop-shadow-md`} />
-                        <span className={`text-xs font-medium ${typeInfo.textClass}`}>
-                          {typeInfo.label}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <Clock className="w-16 h-16 text-dark-400 mx-auto mb-4" />
-                <div className="text-xl text-dark-300">No customers waiting</div>
-              </div>
-            )}
-          </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Clock className="w-16 h-16 text-dark-400 mx-auto mb-4" />
+                  <div className="text-xl text-dark-300">No customers waiting</div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Instructions */}
