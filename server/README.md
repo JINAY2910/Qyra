@@ -229,10 +229,19 @@ Get queue status for a specific customer.
 {
   "success": true,
   "data": {
-    "queueItem": { /* queue item details */ },
+    "queueItem": {
+      "_id": "item_id",
+      "name": "John Doe",
+      "tokenNumber": "QY-A1B2",
+      "status": "waiting"
+    },
     "position": 3,
     "estimatedWaitTime": "15 minutes",
-    "currentlyServing": { /* current customer */ }
+    "currentlyServing": {
+      "_id": "current_id",
+      "name": "Jane Smith",
+      "tokenNumber": "QY-C3D4"
+    }
   }
 }
 ```
@@ -288,7 +297,12 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "message": "Started serving customer",
-  "data": { /* updated queue item */ }
+  "data": {
+    "_id": "item_id",
+    "name": "Customer Name",
+    "tokenNumber": "QY-A1B2",
+    "status": "serving"
+  }
 }
 ```
 
@@ -305,7 +319,13 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "message": "Customer served successfully",
-  "data": { /* completed queue item */ }
+  "data": {
+    "_id": "item_id",
+    "name": "Customer Name",
+    "tokenNumber": "QY-A1B2",
+    "status": "completed",
+    "completedAt": "2024-01-01T00:10:00.000Z"
+  }
 }
 ```
 
@@ -322,7 +342,13 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "message": "Priority increased",
-  "data": { /* updated queue item */ }
+  "data": {
+    "_id": "item_id",
+    "name": "Customer Name",
+    "tokenNumber": "QY-A1B2",
+    "priorityLevel": 11,
+    "status": "waiting"
+  }
 }
 ```
 
@@ -405,7 +431,9 @@ Authorization: Bearer <jwt_token>
     "isMaintenanceMode": false,
     "theme": {
       "darkMode": true
-    }
+    },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
   }
 }
 ```
@@ -432,7 +460,11 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "message": "Settings updated successfully",
-  "data": { /* updated settings */ }
+  "data": {
+    "isPaused": true,
+    "isClosed": false,
+    "isMaintenanceMode": false
+  }
 }
 ```
 
