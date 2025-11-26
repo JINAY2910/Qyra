@@ -43,7 +43,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onSwitchToAdmin }) => {
             {/* Content */}
             <div className="text-center lg:text-left">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-                <span className="bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600 bg-clip-text text-transparent animate-glow">
+                <span className="bg-gradient-to-r from-primary-400 via-primary-200 to-primary-600 bg-[length:200%_auto] bg-clip-text text-transparent animate-shimmer">
                   Qyra
                 </span>
               </h1>

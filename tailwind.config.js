@@ -39,8 +39,23 @@ export default {
         'glow': 'glow 2s ease-in-out infinite alternate',
         'float': 'float 3s ease-in-out infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shimmer': 'shimmer 3s linear infinite',
       },
       keyframes: {
+        'shimmer': {
+          '0%': { 'background-position': '200% center' },
+          '100%': { 'background-position': '-200% center' },
+        },
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          },
+        },
         glow: {
           '0%': { boxShadow: '0 0 5px #c084fc, 0 0 10px #c084fc, 0 0 15px #c084fc' },
           '100%': { boxShadow: '0 0 10px #c084fc, 0 0 20px #c084fc, 0 0 30px #c084fc' },
