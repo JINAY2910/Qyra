@@ -53,7 +53,7 @@ Qyra is a comprehensive queue management solution designed for modern businesses
   - Simple form with name, phone, email, and customer type
   - Customer types: Walk-in, VIP, Senior (with priority levels)
   - Instant token generation with unique ID
-  - Downloadable PDF ticket with QR code
+  - Downloadable PDF ticket with just one click
 
 - **Queue Status**
   - Real-time position tracking
@@ -172,7 +172,7 @@ Qyra is a comprehensive queue management solution designed for modern businesses
    **Terminal 1 - Backend:**
    ```bash
    cd server
-   npm run dev
+   npm start
    ```
    
    **Terminal 2 - Frontend:**
@@ -190,22 +190,26 @@ Qyra is a comprehensive queue management solution designed for modern businesses
 Qyra/
 ├── src/                          # Frontend source code
 │   ├── components/               # Reusable React components
-│   │   ├── Navbar.tsx           # Main navigation bar
-│   │   ├── QueueTicket.tsx      # Digital ticket component
-│   │   ├── QueueTable.tsx       # Admin queue table
-│   │   ├── TokenCard.tsx        # Token display card
-│   │   ├── Toast.tsx            # Notification system
+│   │   ├── AdminControls.tsx    # Admin control buttons
+│   │   ├── Logo.tsx             # Qyra logo component
 │   │   ├── Modal.tsx            # Modal dialogs
-│   │   └── Logo.tsx             # Qyra logo component
+│   │   ├── Navbar.tsx           # Main navigation bar
+│   │   ├── QueueTable.tsx       # Admin queue table
+│   │   ├── QueueTicket.tsx      # Digital ticket component
+│   │   ├── QyraLogo.tsx         # Alternative logo
+│   │   ├── Toast.tsx            # Notification system
+│   │   └── TokenCard.tsx        # Token display card
 │   ├── pages/                    # Application pages
+│   │   ├── AdminAnalytics.tsx   # Analytics dashboard
+│   │   ├── AdminDashboard.tsx   # Queue management
+│   │   ├── AdminLogin.tsx       # Admin authentication
+│   │   ├── AdminSettings.tsx    # Settings management
 │   │   ├── Home.tsx             # Landing page
 │   │   ├── JoinQueue.tsx        # Customer queue joining
-│   │   ├── QueueStatus.tsx      # Public queue display
-│   │   ├── AdminLogin.tsx       # Admin authentication
-│   │   ├── AdminDashboard.tsx   # Queue management
-│   │   ├── AdminAnalytics.tsx   # Analytics dashboard
-│   │   ├── AdminSettings.tsx    # Settings management
-│   │   └── ManageQueue.tsx      # Queue operations
+│   │   ├── ManageQueue.tsx      # Queue operations
+│   │   └── QueueStatus.tsx      # Public queue display
+│   ├── contexts/                 # React contexts
+│   ├── data/                     # Sample data and types
 │   ├── App.tsx                   # Main app component
 │   ├── main.tsx                  # App entry point
 │   └── index.css                 # Global styles
@@ -221,59 +225,77 @@ Qyra/
 │   │   ├── errorHandler.js      # Error handling
 │   │   └── rateLimiter.js       # Rate limiting
 │   ├── models/                   # Mongoose models
-│   │   ├── User.js              # Admin user model
 │   │   ├── QueueItem.js         # Queue entry model
-│   │   └── ShopSettings.js      # Settings model
+│   │   ├── ShopSettings.js      # Settings model
+│   │   └── User.js              # Admin user model
 │   ├── routes/                   # API routes
 │   │   ├── authRoutes.js        # Auth endpoints
 │   │   ├── queueRoutes.js       # Queue endpoints
 │   │   └── settingsRoutes.js    # Settings endpoints
-│   ├── utils/                    # Utility functions
-│   │   └── createAdmin.js       # Admin creation script
 │   ├── scripts/                  # Utility scripts
+│   │   ├── createAdmin.js       # Create admin user
+│   │   └── updateAdminTimePerCustomer.js # Update service time
+│   ├── utils/                    # Utility functions
+│   │   ├── createAdmin.js       # Admin creation helper
+│   │   ├── generateToken.js     # JWT token generator
+│   │   └── generateTokenNumber.js # Queue token generator
+│   ├── .env                      # Environment variables
+│   ├── package.json              # Server dependencies
+│   ├── README.md                 # Server documentation
 │   └── server.js                 # Server entry point
 ├── public/                       # Static assets
 ├── index.html                    # HTML template
 ├── package.json                  # Frontend dependencies
 ├── vite.config.ts               # Vite configuration
 ├── tailwind.config.js           # Tailwind CSS config
+├── tsconfig.json                # TypeScript config
 └── README.md                     # This file
 ```
+
+## 🎯 Usage
+
+### For Customers
+1. **Join Queue** - Fill out the form with your details and customer type
+2. **Get Token** - Receive your virtual token number and position
+3. **Check Status** - Monitor your position and estimated wait time
+4. **TV Display** - View the public queue status on large screens
+
+### For Admins
+1. **Login** - Use your admin credentials to access the dashboard
+2. **Manage Queue** - Start serving, complete, or skip customers
+3. **View Analytics** - Monitor performance metrics and customer insights
+4. **Priority Handling** - Manage VIP and senior citizen priorities
+
+## 🔧 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## 🌟 Key Features
+
+### Smart Queue Management
+- **Priority System** - VIP and senior citizens get priority
+- **Real-time Updates** - Live position tracking
+- **Wait Time Estimation** - Intelligent time calculations
+- **Token System** - Virtual tokens replace physical numbers
+
+### Admin Controls
+- **Queue Operations** - Start, complete, skip customers
+- **Analytics Dashboard** - Performance metrics and insights
+- **Customer Management** - View and manage all customers
+- **Priority Handling** - Special treatment for VIPs and seniors
+
+### Public Display
+- **TV Mode** - Fullscreen optimized for large displays
+- **Real-time Updates** - Live queue status
+- **Large Text** - Easy to read from distance
+- **Responsive Design** - Works on any screen size
 
 ## 📡 API Documentation
 
 ### Base URL
-- **Development**: `http://localhost:5001/api`
-- **Production**: `https://qyra.onrender.com/api`
-
-### Authentication
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "admin@example.com",
-  "password": "password123"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "token": "jwt_token_here",
-  "user": {
-    "id": "user_id",
-    "name": "Admin Name",
-    "email": "admin@example.com",
-    "role": "admin"
-  }
-}
-```
-
-### Queue Operations
 
 #### Join Queue (Public)
 ```http

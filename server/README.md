@@ -119,16 +119,11 @@ The Qyra Server is a Node.js/Express backend that powers the Qyra Queue Manageme
    - Set average time per customer (default: 10 minutes)
 
 5. **Start the server**
-   
-   **Development mode (with auto-reload):**
-   ```bash
-   npm run dev
-   ```
-   
-   **Production mode:**
    ```bash
    npm start
    ```
+   
+   **Note:** For development with auto-reload, use `npm run dev`
 
 6. **Verify server is running**
    
@@ -653,7 +648,7 @@ node server.js
 ```
 
 #### `npm run dev`
-Runs the server with nodemon for auto-reload on file changes.
+Runs the server with nodemon for auto-reload on file changes (development only).
 ```bash
 nodemon server.js
 ```
