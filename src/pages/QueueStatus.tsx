@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Maximize, Minimize2, Users, Clock, Crown, Heart, User, Sparkles, Pause } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 import QyraLogo from '../components/QyraLogo';
 
 type UserPage = 'home' | 'join' | 'status';
@@ -21,7 +22,7 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
   useEffect(() => {
     const fetchCurrentServing = async () => {
       try {
-        const response = await fetch('https://qyra.onrender.com/api/queue/current');
+        const response = await fetch(`${API_BASE_URL}/queue/current`);
         const data = await response.json();
 
         if (response.ok && data.success && data.data) {
@@ -62,7 +63,7 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
   useEffect(() => {
     const fetchQueueList = async () => {
       try {
-        const response = await fetch('https://qyra.onrender.com/api/queue/list');
+        const response = await fetch(`${API_BASE_URL}/queue/list`);
         const data = await response.json();
 
         if (response.ok && data.success && data.data && data.data.queue) {
@@ -110,7 +111,7 @@ const QueueStatus: React.FC<QueueStatusProps> = ({ onNavigate, onFullscreenChang
   useEffect(() => {
     const fetchQueuePauseStatus = async () => {
       try {
-        const response = await fetch('https://qyra.onrender.com/api/settings/public');
+        const response = await fetch(`${API_BASE_URL}/settings/public`);
         const data = await response.json();
 
         if (response.ok && data.success) {

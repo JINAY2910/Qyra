@@ -9,6 +9,7 @@ import {
   Save,
   Clock
 } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 import QyraLogo from '../components/QyraLogo';
 
 interface AdminSettingsProps {
@@ -68,7 +69,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
     const fetchSettings = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://qyra.onrender.com/api/settings', {
+        const response = await fetch(`${API_BASE_URL}/settings`, {
           headers: token ? {
             'Authorization': `Bearer ${token}`
           } : {}
@@ -97,7 +98,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onNavigate, onLogout, sho
     setIsSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://qyra.onrender.com/api/settings/update', {
+      const response = await fetch(`${API_BASE_URL}/settings/update`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,

@@ -5,6 +5,7 @@ import QueueTable from '../components/QueueTable';
 import Modal from '../components/Modal';
 import AdminControls from '../components/AdminControls';
 import { sampleQueue, currentServing } from '../data/sampleQueue';
+import { API_BASE_URL } from '../config/api';
 
 type Page = 'home' | 'join' | 'manage' | 'status';
 
@@ -39,7 +40,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   // Filter and search queue
   const filteredQueue = queue.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.tokenNumber.toString().includes(searchTerm);
+      item.tokenNumber.toString().includes(searchTerm);
     const matchesFilter = filterType === 'all' || item.customerType === filterType;
     return matchesSearch && matchesFilter && item.status === 'waiting';
   });
@@ -51,8 +52,8 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   });
 
   // Stats calculations
-  const todayServed = queue.filter(item => 
-    item.status === 'completed' && 
+  const todayServed = queue.filter(item =>
+    item.status === 'completed' &&
     new Date(item.joinedAt).toDateString() === new Date().toDateString()
   ).length;
 
@@ -62,7 +63,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleStartServing = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://qyra.onrender.com/api/queue/start/${item.id}`, {
+      const response = await fetch(`${API_BASE_URL}/queue/start/${item.id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -77,17 +78,17 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
       if (response.ok && data.success) {
         // Move current serving back to queue if exists
         if (serving) {
-          setQueue(prev => prev.map(q => 
+          setQueue(prev => prev.map(q =>
             q.id === serving.id ? { ...q, status: 'waiting' } : q
           ));
         }
 
         // Set new serving
         setServing(item);
-        setQueue(prev => prev.map(q => 
+        setQueue(prev => prev.map(q =>
           q.id === item.id ? { ...q, status: 'serving' } : q
         ));
-        
+
         showToast(`Now serving Token #${item.tokenNumber}`, 'success');
       } else {
         throw new Error(data.message || 'Failed to start serving');
@@ -102,7 +103,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleComplete = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://qyra.onrender.com/api/queue/complete/${item.id}`, {
+      const response = await fetch(`${API_BASE_URL}/queue/complete/${item.id}`, {
         method: 'PUT',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -117,16 +118,16 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
       if (!response.ok || !data.success) {
         throw new Error(data.message || 'Failed to complete service');
       }
-      
-      setQueue(prev => prev.map(q => 
+
+      setQueue(prev => prev.map(q =>
         q.id === item.id ? { ...q, status: 'completed' } : q
       ));
-      
+
       // Clear serving if this was the current item
       if (serving && serving.id === item.id) {
         setServing(null);
       }
-      
+
       showToast(`Token #${item.tokenNumber} completed!`, 'success');
     } catch (error) {
       console.error('Error completing service:', error);
@@ -139,11 +140,11 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setQueue(prev => prev.map(q => 
+
+      setQueue(prev => prev.map(q =>
         q.id === item.id ? { ...q, priority: Math.max(q.priority, 5) } : q
       ));
-      
+
       showToast(`Token #${item.tokenNumber} marked as priority`, 'success');
     } catch (error) {
       showToast('Failed to update priority. Please try again.', 'error');
@@ -154,7 +155,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
   const handleRemove = async (item: QueueItem) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://qyra.onrender.com/api/queue/${item.id}`, {
+      const response = await fetch(`${API_BASE_URL}/queue/${item.id}`, {
         method: 'DELETE',
         headers: token ? {
           'Authorization': `Bearer ${token}`,
@@ -168,12 +169,12 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
 
       if (response.ok && data.success) {
         setQueue(prev => prev.filter(q => q.id !== item.id));
-        
+
         // Clear serving if this was the current item
         if (serving && serving.id === item.id) {
           setServing(null);
         }
-        
+
         showToast(`Token #${item.tokenNumber} removed from queue`, 'success');
       } else {
         throw new Error(data.message || 'Failed to remove from queue');
@@ -208,7 +209,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
     if (!selectedAction) return { title: '', message: '', confirmText: '', type: 'info' as const };
 
     const { item, action } = selectedAction;
-    
+
     switch (action) {
       case 'serve':
         return {
@@ -262,14 +263,14 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
                 <ArrowLeft className="w-5 h-5" />
                 <span className="hidden sm:inline">Back to Home</span>
               </button>
-              
+
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Queue Management</h1>
                 <p className="text-gray-600 hidden sm:block">Manage your customer queue and service flow</p>
               </div>
             </div>
 
-            <AdminControls 
+            <AdminControls
               isCompactView={isCompactView}
               onToggleView={() => setIsCompactView(!isCompactView)}
             />
@@ -286,7 +287,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
                 <Users className="w-8 h-8 text-teal-200" />
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -296,7 +297,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
                 <CheckCircle className="w-8 h-8 text-indigo-200" />
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -306,7 +307,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
                 <Clock className="w-8 h-8 text-purple-200" />
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -330,7 +331,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
               />
             </div>
-            
+
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <select
@@ -354,7 +355,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
         <div className={`grid gap-8 ${isCompactView ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
           {/* Current Serving Card */}
           <div className={`${isCompactView ? 'lg:col-span-1' : 'lg:col-span-1'}`}>
-            <TokenCard 
+            <TokenCard
               serving={serving}
               onStartServing={(item) => setSelectedAction({ item, action: 'serve' })}
               onComplete={(item) => setSelectedAction({ item, action: 'complete' })}
@@ -364,7 +365,7 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
 
           {/* Queue Table */}
           <div className={`${isCompactView ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
-            <QueueTable 
+            <QueueTable
               queue={sortedQueue}
               isCompactView={isCompactView}
               onStartServing={(item) => setSelectedAction({ item, action: 'serve' })}
@@ -397,13 +398,12 @@ const ManageQueue: React.FC<ManageQueueProps> = ({ onNavigate, showToast }) => {
               </button>
               <button
                 onClick={executeAction}
-                className={`px-6 py-2 rounded-lg text-white font-semibold transition-colors duration-200 ${
-                  getActionModalContent().type === 'error'
+                className={`px-6 py-2 rounded-lg text-white font-semibold transition-colors duration-200 ${getActionModalContent().type === 'error'
                     ? 'bg-red-600 hover:bg-red-700'
                     : getActionModalContent().type === 'success'
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-teal-600 hover:bg-teal-700'
-                }`}
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-teal-600 hover:bg-teal-700'
+                  }`}
               >
                 {getActionModalContent().confirmText}
               </button>

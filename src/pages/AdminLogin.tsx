@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Shield, Eye, EyeOff } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 import QyraLogo from '../components/QyraLogo';
 
 interface AdminLoginProps {
@@ -18,7 +19,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBackToUser }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://qyra.onrender.com/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

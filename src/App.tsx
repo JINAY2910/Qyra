@@ -8,6 +8,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminSettings from './pages/AdminSettings';
 import Toast from './components/Toast';
 
+import { API_BASE_URL } from './config/api';
+
 type UserPage = 'home' | 'join' | 'status';
 type AdminPage = 'login' | 'dashboard' | 'settings';
 type AppMode = 'user' | 'admin';
@@ -25,7 +27,7 @@ function App() {
   useEffect(() => {
     const checkMaintenanceMode = async () => {
       try {
-        const response = await fetch('https://qyra.onrender.com/api/settings/public');
+        const response = await fetch(`${API_BASE_URL}/settings/public`);
         const data = await response.json();
         if (response.ok && data.success) {
           setIsMaintenanceMode(data.data.isMaintenanceMode);

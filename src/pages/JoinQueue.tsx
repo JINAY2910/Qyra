@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Clock, Crown, Heart, User, Sparkles, Download } from 'lucide-react';
 
 import jsPDF from 'jspdf';
+import { API_BASE_URL } from '../config/api';
 import QueueTicket from '../components/QueueTicket';
 
 type UserPage = 'home' | 'join' | 'status';
@@ -49,7 +50,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('https://qyra.onrender.com/api/settings/public');
+        const response = await fetch(`${API_BASE_URL}/settings/public`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -126,7 +127,7 @@ const JoinQueue: React.FC<JoinQueueProps> = ({ onNavigate, showToast }) => {
         'senior': 'Senior'
       };
 
-      const response = await fetch('https://qyra.onrender.com/api/queue/join', {
+      const response = await fetch(`${API_BASE_URL}/queue/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
