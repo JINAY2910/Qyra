@@ -408,7 +408,7 @@ To change the API URL:
 2. Update the `API_BASE_URL` constant:
    ```typescript
    export const API_BASE_URL = 'http://localhost:5001/api'; // For local development
-   // export const API_BASE_URL = 'https://qyra.onrender.com/api'; // For production
+   // export const API_BASE_URL = 'https://your-backend.example.com/api'; // For production
    ```
 
 ### Frontend (Vercel)
