@@ -401,11 +401,15 @@ NODE_ENV=development
 
 ### Client
 
-Update the API base URL in your fetch calls:
-- Development: `http://localhost:5001/api`
-- Production: `https://qyra.onrender.com/api`
+The application uses a centralized configuration file at `src/config/api.ts`.
+To change the API URL:
 
-## 🚢 Deployment
+1. Open `src/config/api.ts`
+2. Update the `API_BASE_URL` constant:
+   ```typescript
+   export const API_BASE_URL = 'http://localhost:5001/api'; // For local development
+   // export const API_BASE_URL = 'https://qyra.onrender.com/api'; // For production
+   ```
 
 ### Frontend (Vercel)
 
