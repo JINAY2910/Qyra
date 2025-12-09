@@ -439,7 +439,7 @@ To change the API URL:
 4. Get connection string
 5. Add to server `.env` file
 
-## 📸 Screenshots
+## 📸 UI Showcase
 
 ### Customer Interface
 - Modern landing page with gradient design
