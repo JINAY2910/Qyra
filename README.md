@@ -26,7 +26,7 @@ A modern, full-stack digital queue management system that eliminates physical wa
 - [API Documentation](#-api-documentation)
 - [Environment Variables](#-environment-variables)
 - [Deployment](#-deployment)
-- [Screenshots](#-screenshots)
+- [UI Showcase](#-ui-showcase)
 - [Contributing](#-contributing)
 - [License](#-license)
 
