@@ -10,7 +10,7 @@
 
 A modern, full-stack digital queue management system that eliminates physical waiting lines and provides real-time queue tracking for both customers and administrators.
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Tech Stack](#-tech-stack) • [API Documentation](#-api-documentation) • [Screenshots](#-screenshots)
+[Features](#-features) • [Quick Start](#-quick-start) • [Tech Stack](#-tech-stack) • [API Documentation](#-api-documentation) • [UI Showcase](#-ui-showcase)
 
 </div>
 
