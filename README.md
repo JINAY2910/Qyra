@@ -10,8 +10,6 @@
 
 A modern, full-stack digital queue management system that eliminates physical waiting lines and provides real-time queue tracking for both customers and administrators.
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Tech Stack](#-tech-stack) • [API Documentation](#-api-documentation) • [UI Showcase](#-ui-showcase)
-
 </div>
 
 ---
@@ -20,12 +18,11 @@ A modern, full-stack digital queue management system that eliminates physical wa
 
 - [Overview](#-overview)
 - [Features](#-features)
-- [Tech Stack](#-tech-stack)
 - [Quick Start](#-quick-start)
 - [Project Structure](#-project-structure)
 - [API Documentation](#-api-documentation)
+- [Server Documentation](#-server-documentation)
 - [Environment Variables](#-environment-variables)
-- [Deployment](#-deployment)
 - [UI Showcase](#-ui-showcase)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -380,6 +377,11 @@ Content-Type: application/json
   "isMaintenanceMode": false
 }
 ```
+
+
+## 📚 Server Documentation
+
+Detailed documentation for the backend API, database schema, and server configuration can be found in the [Server README](server/README.md).
 
 ## 🔐 Environment Variables
 
